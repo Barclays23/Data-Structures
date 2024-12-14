@@ -9,7 +9,7 @@ class Queue1 {
 
     enqueue(element){;
         this.items.push(element);
-        console.log(element + ' is added to the array queue.');
+        console.log('added ', element);
     }
 
     dequeue(){
@@ -17,7 +17,7 @@ class Queue1 {
             console.log('nothing to remove from array queue.');
         } else {
             const removedItem = this.items.shift();
-            console.log(removedItem + ' is removed from the array queue.');
+            console.log('removed ', removedItem);
         }
     }
 
@@ -25,27 +25,57 @@ class Queue1 {
         if (this.items.length === 0){
             console.log('array queue is empty.');
         } else {
-            console.log('peek item in array queue :', this.items[0]);
+            console.log('peek item :', this.items[0]);
             return this.items[0];
         }
     }
-}
 
+    print(){
+        if (!this.items.length){
+            console.log('array queue is empty.');
+        } else {
+            console.log('queque values :', this.items);
+            return this.items;
+        }
+    }
+
+    reverse(){
+        if (!this.items.length) {
+            console.log('nothing to reverse');
+        } else {
+            // const reversedQueue = this.items.reverse(); // in-build method
+            const reversedQueue = [];
+
+            while(this.items.length){
+                reversedQueue.push(this.items.pop());
+            }
+            console.log('reversedQueue : ', reversedQueue);
+            this.items = reversedQueue;
+            return this.items;
+        }
+    }
+
+}
 
 
 
 const arrayQueue = new Queue1;
 
 arrayQueue.peek();
-arrayQueue.enqueue(23);
-arrayQueue.enqueue(27);
+arrayQueue.enqueue(100);
+arrayQueue.enqueue(200);
+arrayQueue.enqueue(300);
+arrayQueue.enqueue(600);
+arrayQueue.enqueue(500);
+arrayQueue.print();
 arrayQueue.peek();
-arrayQueue.enqueue(3);
+arrayQueue.enqueue(700);
+arrayQueue.print();
 arrayQueue.dequeue();
+arrayQueue.print();
 arrayQueue.peek();
-arrayQueue.enqueue(88);
-arrayQueue.peek();
-arrayQueue.dequeue();
+arrayQueue.reverse();
+arrayQueue.print();
 arrayQueue.peek();
 
 
@@ -79,6 +109,8 @@ class Queue2{
             this.rear = node;
         }
         this.size ++;
+
+        console.log('added ', this.rear.value);
     }
 
     dequeue(){
@@ -99,27 +131,61 @@ class Queue2{
         if (!this.front){
             console.log('list queue is empty.');
         } else {
-            console.log('front element in list queue : ' + this.front.value);
+            console.log('front element : ' + this.front.value);
             return this.front.value;
+        }
+    }
+
+    print(){
+        if (!this.front) {
+            console.log('nothing to print in queue');
+        } else {
+            let values = [];
+            let current = this.front;
+            while(current){
+                values.push(current.value);
+                current = current.next;
+            }
+
+            console.log('queue values : ', values);
+        }
+    }
+
+    reverse(){
+        if (!this.front) {
+            console.log('nothing to reverse');
+        } else {
+            this.rear = this.front;
+            let current = this.front;
+            let prev = null;
+            let next = null;
+
+            while (current){
+                next = current.next;
+                current.next = prev;
+                prev = current;
+                current = next;
+            }
+            this.front = prev;
+            
+            console.log('queue reversed');
         }
     }
 }
 
 const listQueue = new Queue2();
 
+// listQueue.dequeue();
+listQueue.print();
+// listQueue.reverse();
+listQueue.enqueue(11);
+listQueue.enqueue(22);
+listQueue.enqueue(33);
+listQueue.enqueue(44);
+listQueue.enqueue(55);
+listQueue.print();
+
 listQueue.peek();
-listQueue.enqueue(111);
-listQueue.peek();
-listQueue.enqueue(222);
-listQueue.enqueue(333);
-listQueue.peek();
-listQueue.dequeue();
-listQueue.enqueue(777);
-listQueue.enqueue(999);
-listQueue.dequeue();
-listQueue.peek();
-listQueue.enqueue(0);
-listQueue.peek();
-listQueue.enqueue(444);
-listQueue.dequeue();
+listQueue.reverse();
+listQueue.print();
 listQueue.peek();

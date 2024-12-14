@@ -42,7 +42,7 @@ class Stack1 {
         }
     }
 
-    reverse(){
+    reverse (){
         if (!this.items.length){
             console.log('nothing to reverse. stack empty');
 
@@ -95,7 +95,7 @@ class Stack2 {
         this.size = 0;
     }
 
-    push(value){
+    push (value){
         const node = new Node(value);
 
         if (!this.top){
@@ -108,7 +108,7 @@ class Stack2 {
         this.size ++;
     }
 
-    pop(){
+    pop (){
         if (!this.top){
             console.log('cannot remove from linkedList stack: Stack is empty.');
         } else {
@@ -127,7 +127,7 @@ class Stack2 {
         }
     }
 
-    print(){
+    print (){
         if (!this.top){
             console.log('stack empty to print');
         } else {
@@ -143,7 +143,7 @@ class Stack2 {
         }
     }
 
-    reverse(){
+    reverse (){
         if (!this.top){
             console.log('nothing to reverse. stack list is empty');
         } else {
