@@ -48,7 +48,7 @@ class BinarySearchTree{
         } else {
             if (value === root.value){
                 console.log(value, ' is found');
-                return root.value;
+                return true
             } else if (value < root.value){
                 return this.search(root.left, value)
             } else {
@@ -92,6 +92,7 @@ class BinarySearchTree{
             while (queue.length){
                 let removed = queue.shift()
                 elements.push(removed.value)
+
                 if (removed.left) queue.push(removed.left)
                 if (removed.right) queue.push(removed.right)
             }
@@ -124,6 +125,7 @@ class BinarySearchTree{
         else if (value < root.value) root.left = this.delete(root.left, value) // Go left
         else if (value > root.value) root.right = this.delete(root.right, value) // Go right
         else {// delete node is found
+            
             // case 1: no child
             if (!root.left && !root.right){
                 return null; // replace with null;
@@ -143,24 +145,89 @@ class BinarySearchTree{
                 root.value = max; // Replace the current node's value with the maximum value from the left subtree
                 root.left = this.delete(root.left, max); // recursively delete the maximum node from the left subtree
             }
+            
         }
         return root;
     }
 
+    isBalanced(root){
+        const result = this.checkHeight(root)
+        console.log('result :', result)
+        console.log('isBalanced :', result !== -1 ? 'balanced' : 'not balanced')
+        
+        return result !== -1
+    }
 
-    sumOfLeftLeaves(root, sum = 0){
+    checkHeight(node) {
+        if (node === null) return 0; // Base case: empty subtree has height 0
+
+        const leftHeight = this.checkHeight(node.left); // Get left subtree height
+        if (leftHeight === -1) return -1; // If left subtree is unbalanced, return -1
+
+        const rightHeight = this.checkHeight(node.right); // Get right subtree height
+        if (rightHeight === -1) return -1; // If right subtree is unbalanced, return -1
+
+        // If the difference between left and right heights is greater than 1, return -1 (unbalanced)
+        if (Math.abs(leftHeight - rightHeight) > 1) return -1;
+
+        // Return the height of the current node
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+
+    sumOfLeftLeaves(root){
+        let sum = 0
+
         if (!root){
             return 0;
         } else {
             if (root.left){
-                if (root.left.left == null && root.left.right == null){
-                    sum += root.left.value;
+                if (!root.left.left && !root.left.right){
+                    sum += root.left.value
                 }
             }
             sum += this.sumOfLeftLeaves(root.left)
             sum += this.sumOfLeftLeaves(root.right)
+    
+            return sum
         }
-        return sum
+    }
+
+    sumOfRightLeaves(root){
+        let sum = 0
+
+        if (!root){
+            return 0;
+        } else {
+            if (root.right){
+                if (!root.right.left && !root.right.right){
+                    sum += root.right.value
+                }
+            }
+            sum += this.sumOfRightLeaves(root.left)
+            sum += this.sumOfRightLeaves(root.right)
+    
+            return sum
+        }
+    }
+
+    sumOfAllLeaves(root){
+        let sum = 0
+
+        if (!root){
+            return 0;
+        } else {
+            if (root.left){
+                if (!root.left.left && !root.left.right) sum += root.left.value
+            }
+            if (root.right){
+                if (!root.right.left && !root.right.right) sum += root.right.value
+            }
+
+            sum += this.sumOfAllLeaves(root.left)
+            sum += this.sumOfAllLeaves(root.right)
+    
+            return sum
+        }
     }
 
 }
@@ -170,35 +237,35 @@ const bst = new BinarySearchTree();
 
 console.log('is bst empty ? : ', bst.isEmpty());
 
-bst.insert(10)
-bst.insert(13)
-bst.insert(18)
-bst.insert(1)
-bst.insert(5)
-bst.insert(20)
-bst.insert(15)
-bst.insert(4)
-bst.insert(6)
-bst.insert(0)
-bst.insert(12)
+const numbers = [10, 13, 18, 1, 5, 20, 15, 4, 6, 0, 12];
+
+for (let i=0; i<numbers.length; i++){
+    bst.insert(numbers[i])
+}
 
 bst.search(bst.root, 13)
 bst.search(bst.root, 10)
 bst.search(bst.root, 20)
+
 console.log('pre-order results :', bst.preOrder(bst.root))
 console.log('in-order results :', bst.inOrder(bst.root))
 console.log('post-order results :', bst.postOrder(bst.root))
 console.log('level-order results :', bst.levelOrder(bst.root))
+
 console.log('minimum value :', bst.minimumValue(bst.root))
 console.log('maximum value :', bst.maximumValue(bst.root))
-console.log('delete node :', bst.delete(bst.root, 15))
-console.log('in-order results :', bst.inOrder(bst.root))
 
-bst.search(bst.root, 15)
 
 console.log('sum of left leaves :', bst.sumOfLeftLeaves(bst.root));
+console.log('sum of right leaves :', bst.sumOfRightLeaves(bst.root));
+console.log('sum of all leaves :', bst.sumOfAllLeaves(bst.root));
 
+bst.isBalanced(bst.root)
 
+// console.log('delete node :', bst.delete(bst.root, 15))
+bst.delete(bst.root, 18)
+
+bst.search(bst.root, 18)
 
 
 
@@ -207,8 +274,25 @@ console.log('sum of left leaves :', bst.sumOfLeftLeaves(bst.root));
 // ------------------------------------------ LEET CODE 938 - RANGE SUM OF BST;
 console.log(`
 ------------------------------------------ LEET CODE 938 - RANGE SUM OF BST)`);
+var rangeSumBST = function(root, low, high) {
+    let sum = 0
 
+    if (!root){
+        return 0;
 
+    } else {
+        if (root.value >= low && root.value <= high){  // .val instead of .value in leetcode
+            sum += root.value;  // .val instead of .value in leetcode
+        }
+
+        sum += rangeSumBST(root.left, low, high)
+        sum += rangeSumBST(root.right, low, high)
+    }
+
+    return sum;
+};
+
+console.log('rangeSumBST : ', rangeSumBST(bst.root, 7, 15));
 
 
 
@@ -238,3 +322,27 @@ var sumOfLeftLeaves = function(root) {
 console.log('sumOfLeftLeaves : ', sumOfLeftLeaves(bst.root));
 
 
+
+
+// ------------------------------------------ LEET CODE 230 - K TH SMALLEST ELEMENT IN A BST;
+console.log(`
+------------------------------------------ LEET CODE 230 - K TH SMALLEST ELEMENT IN A BST)`);
+var kthSmallest = function(root, k) {
+    const result = []
+
+    let inOrder = function (root){
+        if (root){
+            inOrder(root.left)
+            result.push(root.value)  // val instead of value in leet code
+            inOrder(root.right)
+        }
+    }
+
+    inOrder(root)
+
+    // console.log(result)
+    return result[k-1]
+};
+
+
+console.log('kthSmallest : ', kthSmallest(bst.root, 3));
