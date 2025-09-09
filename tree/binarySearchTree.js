@@ -1,8 +1,9 @@
-class Node{
-    constructor(value){
-        this.value = value;
-        this.left = null;
-        this.right = null;
+
+class Node {
+    constructor(val){
+        this.val = val
+        this.left = null
+        this.right = null
     }
 }
 
@@ -10,263 +11,314 @@ class BinarySearchTree{
     constructor(){
         this.root = null;
     }
-
-    isEmpty(){
-        return !this.root;
-    }
-
-    insert(value){
-        const newNode = new Node(value);
-
+    
+    insert(val){
+        const newNode = new Node(val);
+        
         if (!this.root){
             this.root = newNode;
         } else {
             this.insertChild(this.root, newNode)
         }
+        // console.log('inserted', val)
     }
-
+    
     insertChild(root, newNode){
-        if (newNode.value < root.value){
-            if (!root.left){
-                root.left = newNode;
-            } else {
-                this.insertChild(root.left, newNode)
-            }
+        if (newNode.val < root.val){
+            if (!root.left) root.left = newNode;
+            else this.insertChild(root.left, newNode)
         } else {
-            if (!root.right){
-                root.right = newNode;
-            } else {
-                this.insertChild(root.right, newNode)
-            }
+            if (!root.right) root.right = newNode;
+            else this.insertChild(root.right, newNode)
         }
     }
-
-    search(root, value){
-        if (!root){
-            console.log(value, ' not found');
-            return false;
-        } else {
-            if (value === root.value){
-                console.log(value, ' is found');
-                return true
-            } else if (value < root.value){
-                return this.search(root.left, value)
-            } else {
-                return this.search(root.right, value)
-            }
-        }
-    }
-
-    preOrder(root, elements = []){
+    
+    inOrder(root, result = []){
         if (root){
-            elements.push(root.value)
-            this.preOrder(root.left, elements)
-            this.preOrder(root.right, elements)
+            this.inOrder(root.left, result)
+            result.push(root.val)
+            // console.log(root.val, 'is pushed to result')
+            this.inOrder(root.right, result)
         }
         
-        return elements;
+        return result
     }
-
-    inOrder(root, elements = []){
+    
+    preOrder(root, result = []){
         if (root){
-            this.inOrder(root.left, elements)
-            elements.push(root.value)
-            this.inOrder(root.right, elements)
+            result.push(root.val)
+            this.preOrder(root.left, result)
+            this.preOrder(root.right, result)
         }
-        return elements;
+        
+        return result;
     }
-
-    postOrder(root, elements = []){
+    
+    postOrder(root, result = []){
         if (root){
-            this.postOrder(root.left, elements)
-            this.postOrder(root.right, elements)
-            elements.push(root.value)
+            this.postOrder(root.left, result)
+            this.postOrder(root.right, result)
+            result.push(root.val)
         }
-        return elements
+        return result;
     }
-
-    levelOrder(root, queue = [], elements = []){
+    
+    levelOrder(root, result = []){
         if (root){
-            queue.push(root)
-
+            const queue = []
+            queue.push(root);
+            
             while (queue.length){
-                let removed = queue.shift()
-                elements.push(removed.value)
-
-                if (removed.left) queue.push(removed.left)
-                if (removed.right) queue.push(removed.right)
-            }
-        }
-        return elements;
-    }
-
-    minimumValue(root){ 
-        if (root){
-            if (!root.left){
-                return root.value;
-            } else {
-                return this.minimumValue(root.left)
-            }
-        }
-    }
-
-    maximumValue(root){
-        if (root){
-            if (!root.right){
-                return root.value
-            } else {
-                return this.maximumValue(root.right)
-            }
-        }
-    }
-
-    delete(root, value){
-        if (!root) return root;
-        else if (value < root.value) root.left = this.delete(root.left, value) // Go left
-        else if (value > root.value) root.right = this.delete(root.right, value) // Go right
-        else {// delete node is found
-            
-            // case 1: no child
-            if (!root.left && !root.right){
-                return null; // replace with null;
-
-            // case 2: one child node
-            } else if (!root.left){
-                return root.right; // Replace with right child
-
-            } else if (!root.right){
-                return root.left; // Replace with left child
-
-            // case 3: two child nodes
-            } else {
-                let max = this.maximumValue(root.left); // Find maximum value in the left subtree
-                console.log('max :', max);
+                const node = queue.shift();   // take out from front
+                result.push(node.val);
                 
-                root.value = max; // Replace the current node's value with the maximum value from the left subtree
-                root.left = this.delete(root.left, max); // recursively delete the maximum node from the left subtree
+                if (node.left) queue.push(node.left)   // enqueue left
+                if (node.right) queue.push(node.right) // enqueue right
             }
-            
         }
+        
+        return result;
+    }
+    
+    kthLargest(k){
+        const arr = this.inOrder(this.root)
+        return arr[arr.length-k]
+    }
+    
+    findMinimumValue(root) {
+        if (!root) return null;
+        while (root.left) root = root.left;
+        return root.val;
+    }
+    
+    findMaximumValue(root) {
+        if (!root) return null;
+        while (root.right) root = root.right;
+        return root.val;
+    }
+    
+    countAllNodes(root) {
+        if (!root) return 0;
+        
+        // adding 1 for every roots (every nodes)
+        return 1 + this.countAllNodes(root.left) + this.countAllNodes(root.right);
+    }
+    
+    countLeftNodes(root){
+        if (!root) return 0
+        
+        let count = 0
+        
+        if (root.left) count += 1
+        
+        count += this.countLeftNodes(root.left);
+        count += this.countLeftNodes(root.right);
+        
+        return count;
+    }
+    
+    sumOfAllNodes(root){
+        if (!root) return 0;
+        
+        return root.val + this.sumOfAllNodes(root.left) + this.sumOfAllNodes(root.right)
+    }
+    
+    sumOfLeftNodes(root){
+        if (!root) return 0;
+        
+        let sum = 0
+        
+        if (root.left) sum += root.left.val
+        
+        sum += this.sumOfLeftNodes(root.left)
+        sum += this.sumOfLeftNodes(root.right)
+        
+        return sum;
+    }
+    
+    sumOfRightNodes(root){
+        if (!root) return 0;
+        
+        let sum = 0
+        
+        if (root.right) sum += root.right.val;
+        
+        sum += this.sumOfRightNodes(root.left)
+        sum += this.sumOfRightNodes(root.right)
+        
+        return sum;
+    }
+    
+    sumOfAllLeafNodes(root){
+        if (!root) return 0;
+        
+        let sum = 0
+        
+        if (!root.left && !root.right) sum += root.val;
+        
+        sum += this.sumOfAllLeafNodes(root.left)
+        sum += this.sumOfAllLeafNodes(root.right)
+        
+        return sum;
+    }
+    
+    sumOfLeftLeaves(root){
+        if (!root) return 0;
+        
+        let sum = 0
+        
+        if (root.left && !root.left.left && !root.left.right){
+            sum += root.left.val;
+        }
+        
+        sum += this.sumOfLeftLeaves(root.left)
+        sum += this.sumOfLeftLeaves(root.right)
+        
+        return sum;
+    }
+    
+    sumOfRightLeaves(root){
+        if (!root) return 0;
+        
+        let sum = 0
+        
+        if (root.right && !root.right.left && !root.right.right){
+            sum += root.right.val;
+        }
+        
+        sum += this.sumOfRightLeaves(root.left)
+        sum += this.sumOfRightLeaves(root.right)
+        
+        return sum;
+    }
+    
+    areSameTree(root1, root2){
+        if (!root1 && !root2) return true;     // both null → same
+        
+        if (!root1 || !root2) return false;    // one null → different
+        
+        if (root1.val !== root2.val) return false; // values differ
+        
+        return (
+            this.areSameTree(root1.left, root2.left) &&
+            this.areSameTree(root1.right, root2.right)
+        )
+    }
+    
+    isBalanced(root){
+        return this.checkHeight(root) != -1
+    }
+    
+    checkHeight(node){
+        if (!node) return 0
+        
+        const leftHeight = this.checkHeight(node.left)
+        if (leftHeight === -1) return -1
+        
+        const rightHeight = this.checkHeight(node.right)
+        if (rightHeight === -1) return -1
+        
+        if (Math.abs(leftHeight - rightHeight) > 1) return -1
+        
+        return Math.max(leftHeight, rightHeight) +1;
+    }
+    
+    search(root, val){
+        if (!root) {
+            return false;
+        }
+        
+        if (val < root.val){
+            return this.search(root.left, val)
+        } else if (val > root.val){
+            return this.search(root.right, val)
+        } else {
+            return true;
+        }
+    }
+    
+    removeNode(root, val){
+        if (!root){
+            console.log('tree is empty')
+            return;
+        }
+        
+        if (val < root.val){
+            root.left = this.removeNode(root.left, val)
+        }
+        else if (val > root.val){
+            root.right = this.removeNode(root.right, val)
+        } 
+        else {
+            // case 1: no child
+            if (!root.left && !root.right) return null;
+            
+            // case 1: one child
+            if (!root.left) return root.right
+            if (!root.right) return root.left
+            
+            // case 1: two children
+            let minValue = this.findMinimumValue(root.right);
+            root.val = minValue;
+            root.right = this.removeNode(root.right, minValue)
+        }
+        
         return root;
     }
-
-    isBalanced(root){
-        const result = this.checkHeight(root)
-        console.log('result :', result)
-        console.log('isBalanced :', result !== -1 ? 'balanced' : 'not balanced')
-        
-        return result !== -1
-    }
-
-    checkHeight(node) {
-        if (node === null) return 0; // Base case: empty subtree has height 0
-
-        const leftHeight = this.checkHeight(node.left); // Get left subtree height
-        if (leftHeight === -1) return -1; // If left subtree is unbalanced, return -1
-
-        const rightHeight = this.checkHeight(node.right); // Get right subtree height
-        if (rightHeight === -1) return -1; // If right subtree is unbalanced, return -1
-
-        // If the difference between left and right heights is greater than 1, return -1 (unbalanced)
-        if (Math.abs(leftHeight - rightHeight) > 1) return -1;
-
-        // Return the height of the current node
-        return Math.max(leftHeight, rightHeight) + 1;
-    }
-
-    sumOfLeftLeaves(root){
-        let sum = 0
-
-        if (!root){
-            return 0;
-        } else {
-            if (root.left){
-                if (!root.left.left && !root.left.right){
-                    sum += root.left.value
-                }
-            }
-            sum += this.sumOfLeftLeaves(root.left)
-            sum += this.sumOfLeftLeaves(root.right)
     
-            return sum
-        }
-    }
-
-    sumOfRightLeaves(root){
-        let sum = 0
-
-        if (!root){
-            return 0;
-        } else {
-            if (root.right){
-                if (!root.right.left && !root.right.right){
-                    sum += root.right.value
-                }
-            }
-            sum += this.sumOfRightLeaves(root.left)
-            sum += this.sumOfRightLeaves(root.right)
-    
-            return sum
-        }
-    }
-
-    sumOfAllLeaves(root){
-        let sum = 0
-
-        if (!root){
-            return 0;
-        } else {
-            if (root.left){
-                if (!root.left.left && !root.left.right) sum += root.left.value
-            }
-            if (root.right){
-                if (!root.right.left && !root.right.right) sum += root.right.value
-            }
-
-            sum += this.sumOfAllLeaves(root.left)
-            sum += this.sumOfAllLeaves(root.right)
-    
-            return sum
-        }
-    }
-
 }
 
 
-const bst = new BinarySearchTree();
+const BST = new BinarySearchTree();
 
-console.log('is bst empty ? : ', bst.isEmpty());
+const arr = [5, 7, 2, 2, 78, 12, 43, 23, 8, 65, 7, 90, 12]
+arr.forEach((item)=> BST.insert(item))
 
-const numbers = [10, 13, 18, 1, 5, 20, 15, 4, 6, 0, 12];
+console.log('---------------- In Order :')
+console.log(BST.inOrder(BST.root))
 
-for (let i=0; i<numbers.length; i++){
-    bst.insert(numbers[i])
-}
+console.log('---------------- Pre Order :')
+console.log(BST.preOrder(BST.root))
 
-bst.search(bst.root, 13)
-bst.search(bst.root, 10)
-bst.search(bst.root, 20)
-
-console.log('pre-order results :', bst.preOrder(bst.root))
-console.log('in-order results :', bst.inOrder(bst.root))
-console.log('post-order results :', bst.postOrder(bst.root))
-console.log('level-order results :', bst.levelOrder(bst.root))
-
-console.log('minimum value :', bst.minimumValue(bst.root))
-console.log('maximum value :', bst.maximumValue(bst.root))
+console.log('---------------- Post Order :')
+console.log(BST.postOrder(BST.root))
 
 
-console.log('sum of left leaves :', bst.sumOfLeftLeaves(bst.root));
-console.log('sum of right leaves :', bst.sumOfRightLeaves(bst.root));
-console.log('sum of all leaves :', bst.sumOfAllLeaves(bst.root));
+console.log('---------------- Level Order :')
+console.log(BST.levelOrder(BST.root))
 
-bst.isBalanced(bst.root)
+console.log('---------------- k-th largest value :')
+console.log(BST.kthLargest(3))
 
-// console.log('delete node :', bst.delete(bst.root, 15))
-bst.delete(bst.root, 18)
+console.log('---------------- Count All Nodes :')
+console.log(BST.countAllNodes(BST.root))
 
-bst.search(bst.root, 18)
+console.log('---------------- Count Left Nodes :')
+console.log(BST.countLeftNodes(BST.root))
 
+console.log('---------------- Sum of All Nodes :')
+console.log(BST.sumOfAllNodes(BST.root))
+
+console.log('---------------- Sum of Left Nodes :')
+console.log(BST.sumOfLeftNodes(BST.root))
+
+console.log('---------------- Sum of Right Nodes :')
+console.log(BST.sumOfRightNodes(BST.root))
+
+console.log('---------------- Sum of All Leaf Nodes :')
+console.log(BST.sumOfAllLeafNodes(BST.root))
+
+console.log('---------------- Sum of Left Leaf Nodes :')
+console.log(BST.sumOfLeftLeaves(BST.root))
+
+console.log('---------------- Sum of Right Leaf Nodes :')
+console.log(BST.sumOfRightLeaves(BST.root))
+
+console.log('---------------- Is Balanced Tree :')
+console.log(BST.isBalanced(BST.root))
+
+console.log('---------------- Search Value 22 :')
+console.log(BST.search(BST.root, 23))
 
 
 
@@ -281,8 +333,8 @@ var rangeSumBST = function(root, low, high) {
         return 0;
 
     } else {
-        if (root.value >= low && root.value <= high){  // .val instead of .value in leetcode
-            sum += root.value;  // .val instead of .value in leetcode
+        if (root.val >= low && root.val <= high){  // .val instead of .value in leetcode
+            sum += root.val;  // .val instead of .value in leetcode
         }
 
         sum += rangeSumBST(root.left, low, high)
@@ -292,7 +344,7 @@ var rangeSumBST = function(root, low, high) {
     return sum;
 };
 
-console.log('rangeSumBST : ', rangeSumBST(bst.root, 7, 15));
+console.log('rangeSumBST : ', rangeSumBST(BST.root, 7, 15));
 
 
 
@@ -308,7 +360,7 @@ var sumOfLeftLeaves = function(root) {
     } else {
         if (root.left){
             if (!root.left.left && !root.left.right){
-                sum += root.left.value // .val instead of .value in leet code
+                sum += root.left.val // .val instead of .value in leet code
             }
         }
     }
@@ -319,7 +371,7 @@ var sumOfLeftLeaves = function(root) {
     return sum;
 };
 
-console.log('sumOfLeftLeaves : ', sumOfLeftLeaves(bst.root));
+console.log('sumOfLeftLeaves : ', sumOfLeftLeaves(BST.root));
 
 
 
@@ -333,7 +385,7 @@ var kthSmallest = function(root, k) {
     let inOrder = function (root){
         if (root){
             inOrder(root.left)
-            result.push(root.value)  // val instead of value in leet code
+            result.push(root.val)  // val instead of value in leet code
             inOrder(root.right)
         }
     }
@@ -345,4 +397,4 @@ var kthSmallest = function(root, k) {
 };
 
 
-console.log('kthSmallest : ', kthSmallest(bst.root, 3));
+console.log('kthSmallest : ', kthSmallest(BST.root, 3));

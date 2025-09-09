@@ -1,299 +1,391 @@
+
 class Node {
-    constructor(value) {
-        this.value = value;
-        this.next = null;
+    constructor(val){
+        this.val = val
+        this.next = null
     }
 }
 
-
-
-
 class LinkedList {
-    constructor() {
-        this.head = null;
-        this.size = 0;
+    constructor(){
+        this.head = null
     }
-
-
-
-    prepend(value){
-        const node = new Node(value);
-        if (!this.head) {
-            this.head = node;
-            this.next = null;
-        } else {
-            node.next = this.head;
-            this.head = node;
-        }
-        this.size ++;
-    }
-
-
-    append(value){
-        const node = new Node(value);
-        if (!this.head){
-            this.head = node;
-        } else {
-            let temp = this.head;
-            while (temp.next != null){
-                temp = temp.next;
-            }
-            temp.next = node;
-        }
-        this.size ++;
-    }
-
-
-    insertAt(value, index){
-        const newNode = new Node(value);
-
-        if (index === 0){
+    
+    prepend(val){
+        const newNode = new Node(val);
+        
+        if (!this.head) this.head = newNode;
+        else {
             newNode.next = this.head;
             this.head = newNode;
-            return;
         }
-
-        let curr = this.head;
-
-        for (let i=0; i< index-1; i++){
-            if (curr === null){
-                console.log('index is larger than the list');
-                return;
-            }
-            curr = curr.next;
-        }
-
-        let next = curr.next;
-        newNode.next = next;
-        curr.next = newNode;
     }
-
-
-    removeFrom(index){
-        if (index < 0 || index > this.size){
-            return;
-        } else if (index === 0){
-            let temp = this.head;
-            this.head = temp.next;
+    
+    append(val){
+        const newNode = new Node(val);
+        
+        if (!this.head){
+            this.head = newNode;
         } else {
-            let currNode = this.head;
+            let current = this.head;
             
-            for (let i=0; i< index-1; i++) {
-                currNode = currNode.next;
+            while (current.next){
+                current = current.next;
             }
-            let removeNode = currNode.next;
-            let nextNode = removeNode.next;
-            currNode.next = nextNode;
+            current.next = newNode;
         }
-        this.size --;
     }
-
-
-    removeFirst(){
-        if (!this.head){
-            console.log('list is empty to remove from first');
-        } else {
+    
+    print(){
+        if (!this.head) console.log('list is empty')
+        else {
             let temp = this.head;
-            let next = temp.next;
-            this.head = next;
-            console.log('removed '+ temp.value +' from first');
-        }
-    }
-
-
-    removeLast(){
-        if (!this.head){
-            console.log('list is empty to remove form last');
-            return;
-        } else {
-            let curr = this.head;
-
-            if (!curr.next){
-                this.head = null;
-                console.log('removed head as it is the last element');
-            } else {
-                while (curr.next.next){
-                    curr = curr.next;
-                }
-                console.log('removed ' + curr.next.value + 'from last');
-                curr.next = null;
-            }
-        }
-    }
-
-    removeValue(value){
-        if (!this.head){
-            console.log('empty list, no value to remove.');
-            return;
-        } else if (this.head.value === value) {  // if the value is in the head (in 0 th pos)
-            this.head = this.head.next;
-            this.size --;
-        } else {
-            let temp = this.head;
-            while (temp.next && temp.next.value != value){
+            let listItems = ''
+            
+            while (temp){
+                listItems += temp.val + '  '
                 temp = temp.next;
-            } // while loop exit either find the value or find no such value (null)
-            if (temp.next != null){
-                let removeNode = temp.next;
-                temp.next = removeNode.next;
-                this.size --;
-            } else{
-                console.log('no such value found in the list.');
-                return null;
             }
+            return listItems;
         }
     }
-
-
-    search(value){
-        if (!this.head) {
-            console.log('empty list. cannot search.');
-            return -1;
-        }
-        let i=0;
-        let temp = this.head;
-        while (temp != null) {
-            if (temp.value === value){
-                console.log(i);
-                return i;
-            }
-            temp = temp.next;
-            i++;
-        }
-        console.log('value not found in the list.');
-        return -1;  // while the loop ends and no such value found.
-    }
-
     
     reverse(){
-        if(!this.head){
-            console.log('list empty for reverse.');
-        } else {
-            let curr = this.head;
-            let prev = null;
+        if (!this.head) console.log('list is empty to reverse');
+        else {
+            let current = this.head;
             let next = null;
-
-            while (curr) {
-                next = curr.next;
-                curr.next = prev;
-                prev = curr;
-                curr = next;
+            let prev = null;
+            
+            while (current){
+                next = current.next;
+                current.next = prev;
+                
+                prev = current;
+                current = next
             }
-            this.head = prev;  // change the head to the prev (to start from prev)
+            this.head = prev;
         }
     }
-
-
-    findMiddle(){
-        if (!this.head){
-            console.log('list is empty');
-            return null;
-        } else {
-            let one = this.head;
-            let two = this.head;
-
+    
+    length(){
+        if (!this.head) return 0
+        
+        let current = this.head;
+        let size = 0
+        
+        while (current){
+            size ++
+            current = current.next
+        }
+        return size;
+    }
+    
+    middle(){
+        if (!this.head) console.log('list is empty');
+        else {
+            let current = this.head;
+            let one = current;
+            let two = current;
+            
             while (two && two.next){
                 one = one.next;
                 two = two.next.next;
             }
-            console.log('middle is :', one.value);
+            return one.val;
         }
     }
-
-
-
-    print(){
-        let temp = this.head;
-        let listValues = '';
+    
+    search(val){
+        let current = this.head;
         
-        if (temp == null){
-            console.log('list is empty');
-            return;
+        while (current){
+            if (current.val === val) return true;
+            current = current.next;
+        }
+        return false;
+    }
+    
+    findIndex(val){
+        if (!this.head) return -1;
+        
+        let current = this.head;
+        let i = 0;
+        
+        while (current){
+            if (current.val === val) return i;
+            
+            current = current.next;
+            i++
+        }
+        
+        return -1;
+    }
+    
+    insertAt(val, index){
+        const newNode = new Node(val);
+        
+        if (index === 0) {
+            newNode.next = this.head;
+            this.head = newNode;
         } else {
-            while (temp != null) {
-                // console.log(temp.value);
-                listValues += `${temp.value}  `;
-                temp = temp.next;
+            let current = this.head;
+            
+            for (let i=0; i< index-1; i++){
+                if (!current){
+                    console.log('index is out of list size')
+                    return;
+                }
+                current = current.next
+            }
+            
+            let next = current.next;
+            current.next = newNode;
+            newNode.next = next;
+        }
+    }
+    
+    removeLast(){
+        if (!this.head){
+            console.log('list is empty to remove')
+            return;
+        }
+        
+        if (!this.head.next){
+            this.head = null;
+            return;
+        }
+        
+        let current = this.head;
+        
+        while (current.next.next){
+            current = current.next;
+        }
+        
+        current.next = null
+        console.log('last node removed from list')
+    }
+    
+    removeFirst(){
+        if (!this.head){
+            console.log('list is empty to remove')
+            return;
+        }
+        
+        this.head = this.head.next;
+    }
+    
+    removeFromIndex(index){
+        if (!this.head){
+            console.log('list is empty to remove')
+            return;
+        }
+        
+        if (index < 0){
+            console.log('invalid index provided')
+            return;
+        }
+        
+        if (index === 0){
+            this.head = this.head.next;
+            return;
+        }
+        
+        let current = this.head;
+        for (let i=0; i<index-1; i++){
+            if (!current.next){
+                console.log('index out of bound');
+                return;
+            }
+            current = current.next;
+        }
+        
+        if (!current.next){
+            console.log('index out of bound');
+            return;
+        }
+        
+        current.next = current?.next?.next || null;
+    }
+    
+    deleteValue(val){
+        if (this.head.val === val){
+            this.head = this.head.next
+            return;
+        }
+        
+        let current = this.head;
+        
+        while (current && current.next){
+            if (current.next.val === val){
+                current.next = current.next.next;
+            }
+            current = current.next;
+        }
+    }
+    
+    deleteAllEvens(){
+        while (this.head && this.head.val % 2 === 0){
+            this.head = this.head.next;
+        }
+        
+        if (!this.head){
+            console.log('list empty')
+            return;
+        }
+        
+        let current = this.head;
+        
+        while (current && current.next){
+            if (current.next.val % 2 === 0){
+                current.next = current.next.next;
+            } else {
+                current = current.next;
             }
         }
-        console.log('list values are :', listValues);
+    }
+    
+    deleteFirstOdd(){
+        if (this.head && this.head.val % 2 === 1){
+            this.head = this.head.next;
+            return;
+        }
+        
+        let current = this.head;
+        
+        while (current && current.next){
+            if (current.next.val % 2 === 1){
+                current.next = current.next.next;
+                break;
+            }
+            current = current.next;
+        }
+    }
+    
+    removeDuplicates(){
+        if (!this.head){
+            console.log('list is empty')
+            return;
+        }
+        
+        let current = this.head;
+        const map = {}
+        
+        while (current && current.next){
+            map[current.val] = true;
+            
+            if (map[current.next.val]){
+                current.next = current.next.next;
+            } else {
+                current = current.next;
+            }
+        }
+    }
+    
+    findSmallest(){
+        if (!this.head){
+            console.log('no elements in LL')
+            return;
+        }
+        
+        let current = this.head;
+        let smallest = current.val;
+        
+        while (current){
+            smallest = Math.min(current.val, smallest)
+            current = current.next;
+        }
+        
+        return smallest;
+    }
+    
+    isPallindrome(){
+        if (!this.head){
+            console.log('list is empty')
+            return;
+        }
+        
+        let current = this.head;
+        const arr = []
+        while (current && current.val){
+            arr.push(current.val)
+            current = current.next;
+        }
+        
+        let left = 0
+        let right = arr.length-1
+        
+        while (left < right){
+            if (arr[left] != arr[right]) return false;
+            left ++
+            right --
+        }
+        return true;
     }
     
 }
 
+const LL = new LinkedList()
 
-console.log('--------------------------------');
-console.log('PREPEND LIST 1');
-const list1 = new LinkedList;
-list1.prepend(25);
-list1.prepend(41);
-list1.prepend(98);
-list1.prepend(54);
-list1.prepend(12);
-list1.prepend(90);
-list1.print();
-console.log('--------------------------------');
+const arr = [5, 7, 2, 78, 12, 43, 12, 2, 65, 7, 90, 12]
 
+console.log('---------------- APPEND LIST');
+arr.forEach((item)=> LL.append(item))
 
-console.log('APPEND LIST 2');
-const list2 = new LinkedList;
-list2.append(11);
-list2.append(22);
-list2.append(33);
-list2.append(44);
-list2.append(55);
-list2.print();
-console.log('--------------------------------');
+// console.log(JSON.stringify(LL, null, 2))
 
+console.log(LL.print())
 
-console.log('INSERT AT A POSITION OR INDEX IN LIST 2');
-list2.insertAt(77, 3);
-list2.print();
-console.log('--------------------------------');
+console.log('---------------- REVERSE LIST');
+LL.reverse()
+console.log(LL.print())
 
+console.log('---------------- SIZE OF LIST');
+console.log(LL.length())
 
+console.log('---------------- FIND MIDDLE OF LIST')
+console.log(LL.middle())
 
-console.log('REMOVE INDEX VALUE FROM LIST 2');
-list2.removeFrom(2);
-list2.print();
-console.log('--------------------------------');
+console.log('---------------- SEARCH FROM LIST');
+console.log('Find  43:', LL.search(43))
+console.log('Find  34:', LL.search(34))
 
+console.log('---------------- PREPEND LIST');
+LL.prepend(10)
+console.log(LL.print())
 
-console.log('AGAIN APPEND TO LIST 1');
-list1.append(100);
-list1.append(200);
-list1.append(300);
-list1.append(400);
-list1.print();
-console.log('--------------------------------');
+console.log('---------------- INSERT AT A POSITION OR INDEX');
+LL.insertAt(0, 2)
+console.log(LL.print())
 
+console.log('---------------- REMOVE LAST');
+LL.removeLast()
+console.log(LL.print())
 
+console.log('---------------- REMOVE FIRST');
+LL.removeFirst()
+console.log(LL.print())
 
-console.log('REMOVE 200 FROM LIST 1');
-list1.removeValue(200);
-list1.print();
-console.log('--------------------------------');
+console.log('---------------- REMOVE 12 FROM LIST');
+LL.deleteValue(12)
 
+console.log('---------------- REMOVE 200 FROM LIST');
+LL.deleteValue(200)
 
+console.log('---------------- REMOVE FROM INDEX');
+LL.removeFromIndex(6)
+console.log(LL.print())
 
-console.log('SEARCH FROM LIST 2');
-list1.search(41);
-console.log('--------------------------------');
+console.log('---------------- REMOVE ALL EVENS');
+LL.deleteAllEvens()
 
+console.log('---------------- FIND SMALLEST');
+console.log('smallest:', LL.findSmallest())
 
+console.log('---------------- REMOVE DUPLICATES');
+LL.removeDuplicates()
+console.log(LL.print())
 
+console.log('---------------- IS PALLINDROME');
+console.log('isPallindrome :', LL.isPallindrome())
 
-
-console.log('REVERSE LIST 1');
-list1.reverse();
-list1.print();
-console.log('--------------------------------');
-
-
-
-
-
-console.log('FIND MIDDLE OF LIST 2')
-list1.findMiddle();
-list1.print();
-console.log('--------------------------------');
